@@ -1,195 +1,390 @@
 import { motion } from 'framer-motion'
-import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import productLogo from '../assets/product_logo.png'
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: 'easeOut' },
-  },
+  hidden: { opacity: 0, y: 22 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 }
 
 const stagger = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.15 },
+    transition: { staggerChildren: 0.12 },
   },
 }
 
-const features = [
+const postTypes = [
+  'Health question',
+  'Medicine verification',
+  'Prescription review',
+  'Skin/injury image upload',
+  'Emergency help request',
+]
+
+const categories = [
+  'Respiratory',
+  'Dermatology',
+  'Pediatrics',
+  'Mental Health',
+  'Urgent Care',
+  'Medication Safety',
+  'Cardiology',
+  'Women\'s Health',
+]
+
+const trendingPosts = [
   {
-    title: 'AI Risk Triage',
-    description:
-      'Instantly flag urgent symptoms and recommend next best steps before a doctor responds.',
-    tag: 'Realtime triage',
+    title: 'Can I combine ibuprofen and amoxicillin?',
+    reactions: '1.2k votes',
   },
   {
-    title: 'Doctor Consensus',
-    description:
-      'Verified specialists can agree or challenge advice, and AI summarizes the consensus.',
-    tag: 'Verified insights',
+    title: 'Sudden chest tightness after exercise',
+    reactions: '842 votes',
   },
   {
-    title: 'Image Intelligence',
-    description:
-      'Upload prescriptions or skin images and get rapid, context-aware guidance.',
-    tag: 'Vision enabled',
+    title: 'Rash after new skincare routine',
+    reactions: '693 votes',
   },
   {
-    title: 'Community Momentum',
-    description:
-      'Track live replies, reactions, and follow-ups as care evolves in real time.',
-    tag: 'Live updates',
+    title: 'Prescription refill timing advice',
+    reactions: '610 votes',
   },
 ]
 
-const steps = [
+const liveSignals = [
+  { label: 'Socket.io feed', value: 'Connected', status: 'Live' },
+  { label: 'Active doctors', value: '214', status: 'Online' },
+  { label: 'New replies', value: '38', status: 'Last 5 min' },
+]
+
+const posts = [
   {
-    title: 'Share your concern',
-    description: 'Post publicly or anonymously with images, meds, and context.',
+    id: 1,
+    type: 'Health question',
+    title: 'Lingering cough with mild fever after travel',
+    body:
+      'I have had a dry cough and low-grade fever for 5 days after a long flight. No shortness of breath yet. What should I monitor?',
+    category: 'Respiratory',
+    tags: ['cough', 'fever', 'travel'],
+    votes: 482,
+    comments: 64,
+    doctorReplies: 9,
+    time: '12 min ago',
+    author: { name: 'Jordan R.', role: 'Community member', anonymous: false },
+    consensus: { percent: 84, verified: 12, total: 18 },
+    agreements: { agree: 10, caution: 2, disagree: 1 },
+    aiSummary:
+      'Most doctors recommend hydration, monitoring oxygen saturation, and testing if symptoms persist beyond 7 days.',
+    replies: [
+      {
+        name: 'Dr. Patel',
+        specialty: 'Pulmonology',
+        note: 'Monitor breathing rate and get a rapid test if fever spikes.',
+        verified: true,
+      },
+      {
+        name: 'Dr. Ling',
+        specialty: 'Primary Care',
+        note: 'Avoid strenuous activity and track symptoms daily.',
+        verified: true,
+      },
+    ],
+    liveUpdates: '4 new replies',
+    saved: true,
   },
   {
-    title: 'AI triage in seconds',
-    description: 'Get a preliminary risk banner and next-step guidance.',
+    id: 2,
+    type: 'Medicine verification',
+    title: 'Safe to take melatonin with sertraline?',
+    body:
+      'I am on sertraline 50mg and considering melatonin for sleep. Any interactions or timing concerns?',
+    category: 'Medication Safety',
+    tags: ['sertraline', 'melatonin', 'sleep'],
+    votes: 356,
+    comments: 41,
+    doctorReplies: 7,
+    time: '28 min ago',
+    author: { name: 'Anonymous', role: 'Anonymous', anonymous: true },
+    consensus: { percent: 78, verified: 9, total: 13 },
+    agreements: { agree: 8, caution: 3, disagree: 0 },
+    aiSummary:
+      'Consensus suggests low-dose melatonin is generally safe with monitoring for drowsiness and timing around evening.',
+    replies: [
+      {
+        name: 'Dr. Mendez',
+        specialty: 'Psychiatry',
+        note: 'Start low (1-2mg) and avoid late-night doses to reduce grogginess.',
+        verified: true,
+      },
+      {
+        name: 'Dr. Gray',
+        specialty: 'Pharmacology',
+        note: 'No major interaction expected, but watch for vivid dreams.',
+        verified: true,
+      },
+    ],
+    liveUpdates: '2 new replies',
+    saved: false,
   },
   {
-    title: 'Doctors collaborate',
-    description: 'Specialists weigh in, agree, and surface the safest guidance.',
+    id: 3,
+    type: 'Prescription review',
+    title: 'Review my new asthma inhaler schedule',
+    body:
+      'Doctor prescribed budesonide twice daily and albuterol as needed. Does this schedule look right?',
+    category: 'Respiratory',
+    tags: ['asthma', 'inhaler', 'schedule'],
+    votes: 219,
+    comments: 29,
+    doctorReplies: 5,
+    time: '45 min ago',
+    author: { name: 'Meera S.', role: 'Caregiver', anonymous: false },
+    consensus: { percent: 91, verified: 14, total: 16 },
+    agreements: { agree: 12, caution: 1, disagree: 0 },
+    aiSummary:
+      'Doctors confirm the controller plus rescue plan and emphasize rinsing after budesonide use.',
+    replies: [
+      {
+        name: 'Dr. Osei',
+        specialty: 'Allergy & Immunology',
+        note: 'Rinse mouth after controller inhaler to prevent thrush.',
+        verified: true,
+      },
+      {
+        name: 'Dr. Hayes',
+        specialty: 'Pulmonology',
+        note: 'Track rescue inhaler usage to adjust controller dose.',
+        verified: true,
+      },
+    ],
+    liveUpdates: '1 new reply',
+    saved: false,
   },
   {
-    title: 'Consensus delivered',
-    description: 'AI summarizes the expert consensus with confidence levels.',
+    id: 4,
+    type: 'Skin/injury image upload',
+    title: 'Redness around a small cut after 48 hours',
+    body:
+      'Uploaded a photo of the cut. It looks red and warm but no fever. Should I see urgent care?',
+    category: 'Dermatology',
+    tags: ['skin', 'injury', 'infection'],
+    votes: 508,
+    comments: 73,
+    doctorReplies: 11,
+    time: '1 hr ago',
+    author: { name: 'Anonymous', role: 'Anonymous', anonymous: true },
+    consensus: { percent: 76, verified: 10, total: 15 },
+    agreements: { agree: 9, caution: 4, disagree: 0 },
+    aiSummary:
+      'Consensus suggests monitoring for spreading redness and consulting urgent care if swelling increases or fever appears.',
+    replies: [
+      {
+        name: 'Dr. Nguyen',
+        specialty: 'Dermatology',
+        note: 'Outline the redness to track changes over 24 hours.',
+        verified: true,
+      },
+      {
+        name: 'Dr. Cole',
+        specialty: 'Emergency Medicine',
+        note: 'Seek care if pain worsens or red streaks appear.',
+        verified: true,
+      },
+    ],
+    liveUpdates: '6 new replies',
+    saved: true,
+    hasImage: true,
+  },
+  {
+    id: 5,
+    type: 'Emergency help request',
+    title: 'Severe dizziness and chest tightness right now',
+    body:
+      'I am experiencing sudden dizziness, chest tightness, and shortness of breath. Asking for guidance while I wait for help.',
+    category: 'Urgent Care',
+    tags: ['emergency', 'chest pain', 'dizziness'],
+    votes: 1280,
+    comments: 112,
+    doctorReplies: 15,
+    time: '2 min ago',
+    author: { name: 'Anonymous', role: 'Anonymous', anonymous: true },
+    consensus: { percent: 97, verified: 22, total: 24 },
+    agreements: { agree: 21, caution: 2, disagree: 0 },
+    aiSummary:
+      'Doctors urge immediate emergency services and advise staying seated, breathing slowly, and not driving.',
+    replies: [
+      {
+        name: 'Dr. Russell',
+        specialty: 'Emergency Medicine',
+        note: 'Call emergency services and avoid exertion.',
+        verified: true,
+      },
+      {
+        name: 'Dr. Silva',
+        specialty: 'Cardiology',
+        note: 'If possible, keep someone nearby until help arrives.',
+        verified: true,
+      },
+    ],
+    liveUpdates: '12 new replies',
+    urgent: true,
+    saved: false,
   },
 ]
 
-const testimonials = [
-  {
-    quote:
-      'The consensus summary made it easy to understand what multiple doctors agreed on.',
-    name: 'Priya S.',
-    role: 'Patient Advocate',
-  },
-  {
-    quote:
-      'Feels like a live, intelligent healthcare board with real specialist input.',
-    name: 'Dr. Martinez',
-    role: 'Cardiology',
-  },
-  {
-    quote:
-      'The medicine scanner saved my team hours during triage and follow-up.',
-    name: 'Akira T.',
-    role: 'Clinic Operations',
-  },
-]
-
-const doctorSignals = [
-  { label: 'Verified Specialists', value: '2,140+' },
-  { label: 'Active Care Threads', value: '38k+' },
-  { label: 'Avg. Response', value: '4 min' },
-]
-
-function SectionHeader({ label, title, description }) {
-  return (
-    <div className="mx-auto mb-12 max-w-2xl text-center">
-      <div className="glass-pill mx-auto w-fit">{label}</div>
-      <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">
-        {title}
-      </h2>
-      <p className="mt-4 text-base text-slate-300 sm:text-lg">{description}</p>
-    </div>
-  )
+const typeStyles = {
+  'Health question': 'border-med-blue/40 text-med-blue',
+  'Medicine verification': 'border-med-teal/40 text-med-teal',
+  'Prescription review': 'border-med-purple/40 text-med-purple',
+  'Skin/injury image upload': 'border-emerald-400/40 text-emerald-300',
+  'Emergency help request': 'border-rose-400/50 text-rose-300',
 }
+
+const VoteIcon = ({ direction }) => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    {direction === 'up' ? (
+      <path d="M6 14l6-6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+    ) : (
+      <path d="M18 10l-6 6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+    )}
+  </svg>
+)
+
+const IconMessage = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path
+      d="M7 18l-3 3V6a3 3 0 013-3h10a3 3 0 013 3v7a3 3 0 01-3 3H7z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const IconBookmark = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path
+      d="M6 4h12a1 1 0 011 1v15l-7-4-7 4V5a1 1 0 011-1z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const IconShare = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path
+      d="M12 5v10"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8 9l4-4 4 4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M5 13v4a2 2 0 002 2h10a2 2 0 002-2v-4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const IconSpark = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path
+      d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M19 14l.8 1.8L22 16l-1.8.8L19 19l-.8-2.2L16 16l2.2-.8L19 14z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const IconPulse = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path
+      d="M3 12h4l2-5 4 10 2-5h4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const IconPlus = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path d="M12 5v14" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
 
 function Landing() {
-  const rootRef = useRef(null)
-  const frameRef = useRef(null)
-  const rectRef = useRef(null)
-  const latestPoint = useRef({ x: 0, y: 0 })
-
-  const updateRect = () => {
-    const node = rootRef.current
-    if (!node) return
-    rectRef.current = node.getBoundingClientRect()
-  }
-
-  const applyGlow = () => {
-    const node = rootRef.current
-    if (!node) {
-      frameRef.current = null
-      return
-    }
-    const { x, y } = latestPoint.current
-    node.style.setProperty('--mx', `${x}px`)
-    node.style.setProperty('--my', `${y}px`)
-    frameRef.current = null
-  }
-
-  const requestGlowUpdate = () => {
-    if (frameRef.current == null) {
-      frameRef.current = requestAnimationFrame(applyGlow)
-    }
-  }
-
-  useEffect(() => {
-    updateRect()
-    window.addEventListener('resize', updateRect)
-    return () => {
-      window.removeEventListener('resize', updateRect)
-      if (frameRef.current != null) {
-        cancelAnimationFrame(frameRef.current)
-      }
-    }
-  }, [])
-
-  const handlePointerEnter = () => {
-    updateRect()
-  }
-
-  const handlePointerMove = (event) => {
-    const rect = rectRef.current || rootRef.current?.getBoundingClientRect()
-    if (!rect) return
-    rectRef.current = rect
-    latestPoint.current = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    }
-    requestGlowUpdate()
-  }
-
-  const handlePointerLeave = () => {
-    const rect = rectRef.current
-    if (!rect) return
-    latestPoint.current = {
-      x: rect.width * 0.5,
-      y: rect.height * 0.2,
-    }
-    requestGlowUpdate()
-  }
-
   return (
-    <div
-      ref={rootRef}
-      className="relative min-h-screen overflow-hidden bg-ink-950 text-slate-100"
-      onPointerEnter={handlePointerEnter}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-    >
-      <div className="pointer-events-none absolute inset-0 bg-hero-glow opacity-80" />
-      <div className="pointer-events-none absolute inset-0 mouse-glow" />
+    <div className="relative min-h-screen overflow-hidden bg-ink-950 text-slate-100">
+      <div className="pointer-events-none absolute inset-0 bg-hero-glow opacity-70" />
       <div className="pointer-events-none absolute inset-0 grid-overlay opacity-40" />
-
       <div className="pointer-events-none absolute -top-32 left-10 h-72 w-72 rounded-full bg-med-blue/30 blur-3xl animate-blob" />
       <div className="pointer-events-none absolute top-40 right-10 h-80 w-80 rounded-full bg-med-teal/30 blur-3xl animate-blob" />
       <div className="pointer-events-none absolute bottom-10 left-1/3 h-64 w-64 rounded-full bg-med-purple/30 blur-3xl animate-blob" />
 
-      <header className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-8">
+      <header className="relative z-10 mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-8">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-med-blue via-med-teal to-med-purple p-[1px]">
+          <div className="h-11 w-11 rounded-2xl bg-linear-to-br from-med-blue via-med-teal to-med-purple p-px">
             <div className="flex h-full w-full items-center justify-center rounded-2xl bg-ink-900">
               <img
                 src={productLogo}
@@ -200,434 +395,347 @@ function Landing() {
           </div>
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
-              MediHelp
+              MediHelp Feed
             </p>
-            <p className="text-xs text-slate-500">AI + Doctor Consensus</p>
+            <p className="text-xs text-slate-500">
+              Live community + verified doctors
+            </p>
           </div>
         </div>
-        <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
-          <a className="transition hover:text-white" href="#features">
-            Features
-          </a>
-          <a className="transition hover:text-white" href="#community">
-            Doctors
-          </a>
-          <a className="transition hover:text-white" href="#scanner">
-            Scanner
-          </a>
-          <a className="transition hover:text-white" href="#workflow">
-            How it works
-          </a>
-        </nav>
-        <Link className="ghost-button hidden md:inline-flex" to="/auth/login">
-          Sign in
-        </Link>
+        <div className="flex flex-1 flex-wrap items-center justify-center gap-3 md:justify-end">
+          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-slate-300">
+            <span className="live-dot" />
+            Realtime updates via Socket.io
+          </div>
+          <Link className="ghost-button" to="/auth/login">
+            Sign in
+          </Link>
+          <Link className="primary-button" to="/auth/register">
+            Join MediHelp
+          </Link>
+        </div>
       </header>
 
-      <main className="relative z-10 mx-auto flex max-w-6xl flex-col gap-24 px-6 pb-24">
+      <main className="relative z-10 mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-28">
         <motion.section
-          className="grid items-center gap-16 lg:grid-cols-[1.15fr_0.85fr]"
+          className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]"
           initial="hidden"
           animate="show"
           variants={stagger}
         >
           <motion.div variants={fadeUp}>
             <div className="glass-pill w-fit">
-              <span className="h-2 w-2 rounded-full bg-med-teal animate-pulse" />
-              Live physician network
+              <IconPulse />
+              Social healthcare intelligence
             </div>
-            <h1 className="mt-6 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
-              Trusted Healthcare Powered by AI & Verified Doctors
+            <h1 className="mt-6 text-4xl font-semibold leading-tight text-white sm:text-5xl">
+              The MediHelp social feed for real-time care threads
             </h1>
-            <p className="mt-6 text-lg text-slate-300">
-              MediHelp blends community care with verified medical insight. Ask questions,
-              upload images, and get AI-powered triage while certified doctors collaborate
-              on the safest next steps.
+            <p className="mt-5 text-base text-slate-300 sm:text-lg">
+              Share health questions, upload images, and watch verified doctors reach
+              consensus in minutes. Track upvotes, doctor agreement reactions, and AI
+              summaries as the community responds.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link className="primary-button" to="/auth/register">
-                Get started
-              </Link>
-              <Link className="ghost-button" to="/auth/login">
-                Sign in
-              </Link>
-            </div>
-            <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-slate-400">
-              <div className="flex items-center gap-3">
-                <span className="flex h-2.5 w-2.5 items-center justify-center rounded-full bg-med-blue/40">
-                  <span className="h-1.5 w-1.5 rounded-full bg-med-blue animate-pulse" />
+            <div className="mt-6 flex flex-wrap gap-3">
+              {postTypes.map((type) => (
+                <span key={type} className="feed-chip">
+                  {type}
                 </span>
-                24/7 AI triage
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="flex h-2.5 w-2.5 items-center justify-center rounded-full bg-med-teal/40">
-                  <span className="h-1.5 w-1.5 rounded-full bg-med-teal animate-pulse" />
-                </span>
-                Verified doctors only
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="flex h-2.5 w-2.5 items-center justify-center rounded-full bg-med-purple/40">
-                  <span className="h-1.5 w-1.5 rounded-full bg-med-purple animate-pulse" />
-                </span>
-                Consensus insights
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="relative"
-            variants={fadeUp}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="relative rounded-[32px] bg-gradient-to-br from-med-blue/70 via-med-teal/40 to-med-purple/70 p-[1px]">
-              <div className="glass-card relative rounded-[32px] p-6">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-slate-400">AI Health Brief</p>
-                  <span className="text-xs text-emerald-300">Low Risk</span>
-                </div>
-                <div className="mt-6 grid gap-4">
-                  <div className="rounded-2xl bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                      Symptom cluster
-                    </p>
-                    <p className="mt-2 text-sm text-white">
-                      Persistent cough, mild fever, fatigue
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                      AI Guidance
-                    </p>
-                    <p className="mt-2 text-sm text-slate-200">
-                      Hydration + monitor vitals. Doctor review in progress.
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-white/5 p-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                        Consensus
-                      </p>
-                      <span className="text-xs text-slate-400">87% match</span>
-                    </div>
-                    <div className="mt-3 h-2 w-full rounded-full bg-white/10">
-                      <div className="h-2 w-4/5 rounded-full bg-gradient-to-r from-med-blue via-med-teal to-med-purple" />
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 flex items-center gap-2 text-xs text-slate-400">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  18 doctors actively reviewing
-                </div>
-              </div>
-            </div>
-
-            <motion.div
-              className="absolute -left-10 top-12 w-44 glass-card p-4"
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <p className="text-xs text-slate-400">Realtime Replies</p>
-              <p className="mt-3 text-lg font-semibold text-white">+4</p>
-              <p className="text-xs text-slate-500">last 2 minutes</p>
-            </motion.div>
-            <motion.div
-              className="absolute -right-6 bottom-16 w-48 glass-card p-4"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <p className="text-xs text-slate-400">Medication match</p>
-              <p className="mt-3 text-lg font-semibold text-white">98% safe</p>
-              <p className="text-xs text-slate-500">No interactions found</p>
-            </motion.div>
-            <motion.div
-              className="absolute left-20 -bottom-8 w-40 glass-card p-4"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <p className="text-xs text-slate-400">Pulse</p>
-              <p className="mt-3 text-lg font-semibold text-white">72 bpm</p>
-              <p className="text-xs text-slate-500">Stable</p>
-            </motion.div>
-          </motion.div>
-        </motion.section>
-
-        <motion.section
-          id="features"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-          className="relative"
-        >
-          <div className="absolute inset-0 -z-10 bg-section-glow opacity-70" />
-          <SectionHeader
-            label="AI Healthcare Features"
-            title="A triage engine that feels alive"
-            description="Every post becomes a live care thread with AI triage, doctor collaboration, and transparent consensus."
-          />
-          <div className="grid gap-6 md:grid-cols-2">
-            {features.map((feature) => (
-              <motion.div
-                key={feature.title}
-                variants={fadeUp}
-                className="glass-card p-6"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                    {feature.tag}
-                  </p>
-                  <span className="h-2 w-2 rounded-full bg-med-teal animate-pulse" />
-                </div>
-                <h3 className="mt-4 text-xl font-semibold text-white">
-                  {feature.title}
-                </h3>
-                <p className="mt-3 text-sm text-slate-300">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
-        <motion.section
-          id="community"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-          className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr]"
-        >
-          <motion.div variants={fadeUp}>
-            <SectionHeader
-              label="Doctor Community"
-              title="A verified medical council, in real time"
-              description="Every response is backed by verified credentials, with transparent signals on agreement and expertise."
-            />
-            <div className="grid gap-4">
-              {doctorSignals.map((signal) => (
-                <div
-                  key={signal.label}
-                  className="glass-card flex items-center justify-between p-4"
-                >
-                  <div>
-                    <p className="text-sm text-slate-400">{signal.label}</p>
-                    <p className="text-2xl font-semibold text-white">
-                      {signal.value}
-                    </p>
-                  </div>
-                  <div className="h-10 w-10 rounded-full bg-med-blue/20 blur-xl" />
-                </div>
               ))}
             </div>
           </motion.div>
-          <motion.div variants={fadeUp}>
-            <div className="glass-card p-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-300">Active Doctor Panel</p>
-                <span className="text-xs text-emerald-300">Verified</span>
-              </div>
-              <div className="mt-6 grid gap-4">
-                {['Emergency Care', 'Dermatology', 'Pediatrics'].map(
-                  (specialty) => (
-                    <div
-                      key={specialty}
-                      className="flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3"
-                    >
-                      <div>
-                        <p className="text-sm font-semibold text-white">
-                          {specialty}
-                        </p>
-                        <p className="text-xs text-slate-400">On-call now</p>
-                      </div>
-                      <span className="flex h-2.5 w-2.5 items-center justify-center rounded-full bg-emerald-400/30">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      </span>
-                    </div>
-                  ),
-                )}
-              </div>
-              <div className="mt-6 rounded-2xl bg-gradient-to-r from-med-blue/20 via-med-teal/20 to-med-purple/20 p-4">
-                <p className="text-sm text-slate-200">
-                  Consensus strength is calculated from verified replies,
-                  weighted by specialty.
-                </p>
-              </div>
+          <motion.div variants={fadeUp} className="glass-card p-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+              Live consensus signals
+            </p>
+            <div className="mt-6 grid gap-4">
+              {liveSignals.map((item) => (
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
+                >
+                  <div>
+                    <p className="text-sm text-white">{item.label}</p>
+                    <p className="text-xs text-slate-400">{item.status}</p>
+                  </div>
+                  <span className="text-sm font-semibold text-emerald-300">
+                    {item.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 rounded-2xl bg-linear-to-r from-med-blue/20 via-med-teal/20 to-med-purple/20 p-4 text-sm text-slate-200">
+              Doctor consensus is weighted by specialty, response quality, and
+              verified credentials.
             </div>
           </motion.div>
         </motion.section>
 
-        <motion.section
-          id="scanner"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-          className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]"
-        >
-          <motion.div variants={fadeUp}>
-            <SectionHeader
-              label="Medicine Scanner"
-              title="Scan prescriptions with confidence"
-              description="Point, upload, and receive immediate safety signals and verified doctor checks."
-            />
-            <div className="glass-card p-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-300">Prescription scan</p>
-                <span className="text-xs text-slate-400">AI vision active</span>
-              </div>
-              <div className="mt-6 h-44 rounded-2xl border border-dashed border-white/10 bg-white/5 p-4">
-                <div className="flex h-full flex-col items-center justify-center text-center">
-                  <p className="text-sm text-slate-300">Drop image here</p>
-                  <p className="text-xs text-slate-500">JPG, PNG, or HEIC</p>
-                </div>
-              </div>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl bg-white/5 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                    Interaction check
+        <div className="grid gap-8 lg:grid-cols-[1.6fr_0.8fr]">
+          <motion.section initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}>
+            <motion.div variants={fadeUp} className="glass-card p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm text-slate-400">Start a new care thread</p>
+                  <p className="text-lg font-semibold text-white">
+                    What do you want doctors to review?
                   </p>
-                  <p className="mt-3 text-sm text-white">No critical conflicts</p>
                 </div>
-                <div className="rounded-2xl bg-white/5 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                    Follow-up
-                  </p>
-                  <p className="mt-3 text-sm text-white">2 doctors reviewing</p>
+                <div className="flex items-center gap-2 text-xs text-slate-300">
+                  <span className="live-dot" />
+                  142 doctors online
                 </div>
               </div>
-            </div>
-          </motion.div>
-          <motion.div variants={fadeUp}>
-            <div className="glass-card h-full p-6">
-              <p className="text-sm text-slate-300">Scanner timeline</p>
-              <div className="mt-6 space-y-4">
-                {[
-                  'Upload or capture medicine label',
-                  'AI extracts dosage and risks',
-                  'Doctors confirm compatibility',
-                ].map((item, index) => (
-                  <div key={item} className="flex items-start gap-4">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-med-blue/20 text-sm text-white">
-                      {index + 1}
+              <div className="mt-6 grid gap-4">
+                <textarea
+                  className="feed-input"
+                  rows="3"
+                  placeholder="Share symptoms, attach a prescription, or ask a medicine question."
+                />
+                <div className="flex flex-wrap gap-2">
+                  {postTypes.map((type) => (
+                    <button key={type} className="feed-action" type="button">
+                      {type}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+                    <span className="feed-chip">Anonymous posting</span>
+                    <span className="feed-chip">Attach image</span>
+                    <span className="feed-chip">Add tags</span>
+                  </div>
+                  <button className="primary-button" type="button">
+                    Post to feed
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+
+            <div className="mt-8 grid gap-6">
+              {posts.map((post) => (
+                <motion.article
+                  key={post.id}
+                  variants={fadeUp}
+                  whileHover={{ y: -4 }}
+                  className={`glass-card p-6 transition ${post.urgent ? 'border border-rose-400/40 shadow-glow' : ''}`}
+                >
+                  <div className="flex flex-wrap items-start gap-5">
+                    <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+                      <button className="feed-icon" type="button" aria-label="Upvote">
+                        <VoteIcon direction="up" />
+                      </button>
+                      <span className="text-sm font-semibold text-white">
+                        {post.votes}
+                      </span>
+                      <button className="feed-icon" type="button" aria-label="Downvote">
+                        <VoteIcon direction="down" />
+                      </button>
                     </div>
-                    <p className="text-sm text-slate-300">{item}</p>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`feed-chip ${typeStyles[post.type] || 'border-white/20 text-slate-200'
+                              }`}
+                          >
+                            {post.type}
+                          </span>
+                          <span className="feed-chip">{post.category}</span>
+                          {post.urgent ? (
+                            <span className="feed-chip border-rose-400/50 text-rose-300">
+                              Emergency
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+                          <span className="live-dot" />
+                          {post.liveUpdates}
+                        </div>
+                      </div>
+
+                      <h2 className="mt-4 text-xl font-semibold text-white">
+                        {post.title}
+                      </h2>
+                      <p className="mt-2 text-sm text-slate-300">{post.body}</p>
+
+                      {post.hasImage ? (
+                        <div className="mt-4 rounded-2xl border border-dashed border-white/15 bg-linear-to-br from-med-blue/10 via-med-teal/10 to-med-purple/10 p-4">
+                          <div className="flex items-center justify-between text-xs text-slate-400">
+                            <span>Image upload preview</span>
+                            <span className="text-emerald-300">Verified scan ready</span>
+                          </div>
+                          <div className="mt-4 h-32 rounded-xl bg-white/5" />
+                        </div>
+                      ) : null}
+
+                      <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-400">
+                        <span className="feed-chip">
+                          {post.author.anonymous ? 'Anonymous' : post.author.name}
+                        </span>
+                        <span>
+                          {post.author.anonymous ? 'Private profile' : post.author.role}
+                        </span>
+                        <span>{post.time}</span>
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {post.tags.map((tag) => (
+                          <span key={tag} className="feed-tag">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div className="flex flex-wrap items-start justify-between gap-4">
+                          <div>
+                            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                              Doctor consensus
+                            </p>
+                            <p className="mt-1 text-sm text-white">
+                              {post.consensus.percent}% agreement across {post.consensus.total} replies
+                            </p>
+                          </div>
+                          <div className="text-xs text-emerald-300">
+                            {post.consensus.verified} verified responses · {post.doctorReplies} doctor replies
+                          </div>
+                        </div>
+                        <div className="mt-3 h-2 w-full rounded-full bg-white/10">
+                          <div
+                            className="h-2 rounded-full bg-linear-to-r from-med-blue via-med-teal to-med-purple"
+                            style={{ width: `${post.consensus.percent}%` }}
+                          />
+                        </div>
+                        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-300">
+                          <span className="feed-chip">Agree {post.agreements.agree}</span>
+                          <span className="feed-chip">Caution {post.agreements.caution}</span>
+                          <span className="feed-chip">Disagree {post.agreements.disagree}</span>
+                        </div>
+                        <div className="mt-3 flex items-center gap-2 text-xs text-slate-300">
+                          <IconSpark />
+                          AI summary: {post.aiSummary}
+                        </div>
+                      </div>
+
+                      <div className="mt-5 grid gap-3">
+                        {post.replies.map((reply) => (
+                          <div
+                            key={reply.name}
+                            className="flex items-start justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
+                          >
+                            <div>
+                              <p className="text-sm font-semibold text-white">
+                                {reply.name}
+                                {reply.verified ? (
+                                  <span className="ml-2 text-xs text-emerald-300">
+                                    Verified
+                                  </span>
+                                ) : null}
+                              </p>
+                              <p className="text-xs text-slate-400">
+                                {reply.specialty}
+                              </p>
+                              <p className="mt-2 text-sm text-slate-300">
+                                {reply.note}
+                              </p>
+                            </div>
+                            <span className="feed-chip">Doctor reply</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-slate-300">
+                        <span className="feed-action">
+                          <IconMessage /> {post.comments} replies
+                        </span>
+                        <button
+                          className={`feed-action ${post.saved ? 'text-emerald-200' : ''}`}
+                          type="button"
+                        >
+                          <IconBookmark /> {post.saved ? 'Saved' : 'Save'}
+                        </button>
+                        <button className="feed-action" type="button">
+                          <IconShare /> Share
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </motion.section>
+
+          <motion.aside
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="space-y-6"
+          >
+            <motion.div variants={fadeUp} className="glass-card p-6">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                Trending posts
+              </p>
+              <div className="mt-4 grid gap-4">
+                {trendingPosts.map((post) => (
+                  <div
+                    key={post.title}
+                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
+                  >
+                    <p className="text-sm text-white">{post.title}</p>
+                    <p className="mt-1 text-xs text-slate-400">{post.reactions}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-8 rounded-2xl bg-gradient-to-br from-med-blue/20 via-med-teal/20 to-med-purple/20 p-4">
-                <p className="text-sm text-white">Realtime accuracy score</p>
-                <p className="mt-2 text-2xl font-semibold text-white">99.2%</p>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="glass-card p-6">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                Categories
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <span key={category} className="feed-chip">
+                    {category}
+                  </span>
+                ))}
               </div>
-            </div>
-          </motion.div>
-        </motion.section>
+            </motion.div>
 
-        <motion.section
-          id="workflow"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-        >
-          <SectionHeader
-            label="How It Works"
-            title="From question to consensus in minutes"
-            description="A seamless flow that blends AI speed with human medical expertise."
-          />
-          <div className="grid gap-6 md:grid-cols-2">
-            {steps.map((step, index) => (
-              <motion.div
-                key={step.title}
-                variants={fadeUp}
-                className="glass-card p-6"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-med-purple/20 text-sm font-semibold text-white">
-                    {index + 1}
+            <motion.div variants={fadeUp} className="glass-card p-6">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                Live activity
+              </p>
+              <div className="mt-4 grid gap-3">
+                {liveSignals.map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
+                  >
+                    <span className="text-sm text-slate-300">{item.label}</span>
+                    <span className="text-xs text-emerald-300">{item.value}</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-white">
-                    {step.title}
-                  </h3>
-                </div>
-                <p className="mt-3 text-sm text-slate-300">
-                  {step.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
-        <motion.section
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-        >
-          <SectionHeader
-            label="Testimonials"
-            title="Trusted by patients and physicians"
-            description="High-trust experiences from the community shaping MediHelp."
-          />
-          <div className="grid gap-6 lg:grid-cols-3">
-            {testimonials.map((item) => (
-              <motion.div key={item.name} variants={fadeUp} className="glass-card p-6">
-                <p className="text-sm text-slate-200">"{item.quote}"</p>
-                <div className="mt-6">
-                  <p className="text-sm font-semibold text-white">{item.name}</p>
-                  <p className="text-xs text-slate-400">{item.role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
-        <motion.section
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeUp}
-          className="glass-card relative overflow-hidden p-8 text-center"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-med-blue/20 via-med-teal/20 to-med-purple/20" />
-          <div className="relative z-10">
-            <p className="text-xs uppercase tracking-[0.35em] text-slate-300">
-              Emergency help
-            </p>
-            <h2 className="mt-4 text-3xl font-semibold text-white">
-              Immediate risk? Start an emergency care thread now.
-            </h2>
-            <p className="mt-4 text-sm text-slate-300">
-              MediHelp elevates high-risk cases with priority doctor routing and
-              real-time alerts.
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <Link className="primary-button" to="/auth/register">
-                Start now
-              </Link>
-              <button className="ghost-button" type="button">
-                View emergency guide
-              </button>
-            </div>
-          </div>
-        </motion.section>
+                ))}
+              </div>
+              <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-400">
+                Live activity indicators refresh every 3 seconds via Socket.io.
+              </div>
+            </motion.div>
+          </motion.aside>
+        </div>
       </main>
 
-      <footer className="relative z-10 border-t border-white/10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-base font-semibold text-white">MediHelp</p>
-            <p className="mt-2 text-xs text-slate-500">
-              Community-first healthcare intelligence.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-6 text-xs uppercase tracking-[0.3em]">
-            <span>Privacy</span>
-            <span>Security</span>
-            <span>Compliance</span>
-            <span>Support</span>
-          </div>
-        </div>
-      </footer>
+      <motion.button
+        className="fab-button"
+        type="button"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <IconPlus />
+        New post
+      </motion.button>
     </div>
   )
 }
