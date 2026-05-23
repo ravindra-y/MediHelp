@@ -59,6 +59,130 @@ const liveSignals = [
   { label: 'New replies', value: '38', status: 'Last 5 min' },
 ]
 
+const aiFeatures = [
+  {
+    title: 'AI Symptom Checker',
+    description: 'Multi-symptom triage with context and severity cues.',
+    icon: 'pulse',
+  },
+  {
+    title: 'Medicine Image Scanner',
+    description: 'Identifies pills, packaging, and interaction risks.',
+    icon: 'scan',
+  },
+  {
+    title: 'Prescription OCR Reader',
+    description: 'Extracts dosage, schedule, and refill instructions.',
+    icon: 'doc',
+  },
+  {
+    title: 'AI Risk Detection',
+    description: 'Flags allergies, contraindications, and red-flag symptoms.',
+    icon: 'shield',
+  },
+  {
+    title: 'AI Doctor Reply Summary',
+    description: 'Summarizes verified doctor consensus into key actions.',
+    icon: 'spark',
+  },
+  {
+    title: 'Emergency Alert Detection',
+    description: 'Escalates critical signals with urgent guidance.',
+    icon: 'alert',
+  },
+]
+
+const aiFlow = [
+  {
+    index: '01',
+    title: 'Upload image or text',
+    detail: 'Symptoms, medicine photos, or prescriptions.',
+    active: true,
+  },
+  {
+    index: '02',
+    title: 'AI analyzes content',
+    detail: 'Vision, OCR, and medical context models.',
+  },
+  {
+    index: '03',
+    title: 'Risk level generated',
+    detail: 'Safe, Warning, or Critical classification.',
+  },
+  {
+    index: '04',
+    title: 'Care suggestion',
+    detail: 'Home care, consult doctor, or emergency treatment.',
+  },
+]
+
+const riskLevels = [
+  {
+    level: 'Safe',
+    description: 'Low-risk symptoms and routine monitoring advised.',
+    tone: 'risk-card--safe',
+    tag: 'Green',
+  },
+  {
+    level: 'Warning',
+    description: 'Potential concerns detected. Consult a doctor.',
+    tone: 'risk-card--warning',
+    tag: 'Yellow',
+  },
+  {
+    level: 'Critical',
+    description: 'High-risk signals. Emergency care recommended.',
+    tone: 'risk-card--critical',
+    tag: 'Red',
+  },
+]
+
+const careSuggestions = [
+  {
+    title: 'Home care',
+    detail: 'Track symptoms, hydrate, and monitor changes.',
+  },
+  {
+    title: 'Consult doctor',
+    detail: 'Book a visit for persistent or worsening symptoms.',
+  },
+  {
+    title: 'Emergency treatment',
+    detail: 'Seek urgent care when critical signs appear.',
+  },
+]
+
+const processingStages = [
+  {
+    title: 'Symptom analysis',
+    status: 'Running',
+    progress: '72%',
+    highlight: 'text-emerald-300',
+    tone: 'ai-process-card--active',
+  },
+  {
+    title: 'Risk engine',
+    status: 'Warning',
+    progress: '46%',
+    highlight: 'text-yellow-300',
+    tone: 'ai-process-card--warning',
+  },
+  {
+    title: 'Emergency alerts',
+    status: 'Monitoring',
+    progress: '90%',
+    highlight: 'text-rose-300',
+    tone: 'ai-process-card--critical',
+  },
+]
+
+const aiDoctorSummary = {
+  title: 'Consensus summary',
+  summary:
+    'Doctors recommend monitoring breathing rate, resting, and scheduling a same-day visit if symptoms escalate.',
+  actions: ['Monitor vitals', 'Schedule visit', 'Avoid exertion'],
+}
+
 const posts = [
   {
     id: 1,
@@ -359,6 +483,80 @@ const IconPulse = () => (
   </svg>
 )
 
+const IconScan = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path d="M4 7V5a1 1 0 011-1h2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 7V5a1 1 0 00-1-1h-2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4 17v2a1 1 0 001 1h2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 17v2a1 1 0 01-1 1h-2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M7 12h10" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const IconDoc = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path
+      d="M7 3h7l4 4v12a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M14 3v5h5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8 12h8" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8 16h6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const IconShield = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path
+      d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const IconAlert = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+  >
+    <path d="M12 8v5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 17h.01" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M10.2 3.6l-7.4 12.8a1.2 1.2 0 001 1.8h16.4a1.2 1.2 0 001-1.8L13.8 3.6a1.2 1.2 0 00-3.6 0z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
 const IconPlus = () => (
   <svg
     aria-hidden="true"
@@ -469,6 +667,191 @@ function Landing() {
               verified credentials.
             </div>
           </motion.div>
+        </motion.section>
+
+        <motion.section
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={stagger}
+          className="relative"
+        >
+          <div className="pointer-events-none absolute inset-x-0 -top-10 h-32 bg-section-glow opacity-80 blur-3xl" />
+          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <motion.div variants={fadeUp} className="glass-card p-6 ai-console">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                    AI triage lab
+                  </p>
+                  <h2 className="mt-2 text-2xl font-semibold text-white">
+                    Advanced AI care intelligence
+                  </h2>
+                  <p className="mt-2 text-sm text-slate-300">
+                    Upload symptoms, medicine photos, or prescriptions. AI models
+                    combine vision, OCR, and verified doctor signals.
+                  </p>
+                </div>
+                <span className="ai-status">
+                  <span className="ai-status-dot" />
+                  Processing live
+                </span>
+              </div>
+
+              <div className="mt-6 grid gap-4">
+                <div className="ai-scan-frame">
+                  <div className="ai-scan-header">
+                    <span className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-slate-400">
+                      <IconScan />
+                      Medicine Image Scanner
+                    </span>
+                    <span className="ai-scan-tag">Scanning 68%</span>
+                  </div>
+                  <div className="ai-scan-body">
+                    <div className="ai-scan-surface">
+                      <div className="ai-scan-grid" />
+                      <div className="ai-scan-line" />
+                      <div className="ai-scan-pulse" />
+                    </div>
+                    <div className="ai-scan-meta">
+                      <p className="text-sm text-white">Amoxicillin 500mg</p>
+                      <p className="text-xs text-slate-400">
+                        3 interactions checked · pill ID verified
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="ai-progress-card">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+                    <span className="flex items-center gap-2">
+                      <IconDoc />
+                      Prescription OCR Reader
+                    </span>
+                    <span className="text-emerald-300">Complete</span>
+                  </div>
+                  <div className="ai-progress-bar">
+                    <span className="ai-progress-fill" style={{ width: '100%' }} />
+                  </div>
+                  <p className="mt-2 text-xs text-slate-300">
+                    Detected: "Take 1 tablet twice daily with meals."
+                  </p>
+                </div>
+
+                <div className="ai-process-grid">
+                  {processingStages.map((stage) => (
+                    <div key={stage.title} className={`ai-process-card ${stage.tone}`}>
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <span>{stage.title}</span>
+                        <span className={stage.highlight}>{stage.status}</span>
+                      </div>
+                      <div className="ai-progress-bar ai-progress-bar--compact">
+                        <span className="ai-progress-fill" style={{ width: stage.progress }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="ai-flow-grid">
+                  {aiFlow.map((step) => (
+                    <div
+                      key={step.title}
+                      className={`ai-flow-step ${step.active ? 'ai-flow-step--active' : ''}`}
+                    >
+                      <span className="ai-flow-index">{step.index}</span>
+                      <div>
+                        <p className="text-sm text-white">{step.title}</p>
+                        <p className="text-xs text-slate-400">{step.detail}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="ai-disclaimer">
+                  This is not a replacement for professional medical advice.
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="space-y-6">
+              <div className="glass-card p-6">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                  AI features
+                </p>
+                <div className="mt-4 grid gap-3">
+                  {aiFeatures.map((feature) => (
+                    <div key={feature.title} className="ai-feature">
+                      <span className="ai-feature-icon">
+                        {feature.icon === 'pulse' ? <IconPulse /> : null}
+                        {feature.icon === 'scan' ? <IconScan /> : null}
+                        {feature.icon === 'doc' ? <IconDoc /> : null}
+                        {feature.icon === 'shield' ? <IconShield /> : null}
+                        {feature.icon === 'spark' ? <IconSpark /> : null}
+                        {feature.icon === 'alert' ? <IconAlert /> : null}
+                      </span>
+                      <div>
+                        <p className="text-sm text-white">{feature.title}</p>
+                        <p className="text-xs text-slate-400">{feature.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="glass-card p-6">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                  AI risk detection
+                </p>
+                <div className="mt-4 grid gap-3">
+                  {riskLevels.map((risk) => (
+                    <div key={risk.level} className={`risk-card ${risk.tone}`}>
+                      <div>
+                        <p className="text-sm font-semibold text-white">{risk.level}</p>
+                        <p className="text-xs text-slate-300">{risk.description}</p>
+                      </div>
+                      <span className="risk-tag">{risk.tag}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-5 grid gap-3">
+                  {careSuggestions.map((suggestion) => (
+                    <div key={suggestion.title} className="ai-suggestion">
+                      <p className="text-sm text-white">{suggestion.title}</p>
+                      <p className="text-xs text-slate-400">{suggestion.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="glass-card p-6">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                  AI doctor reply summary
+                </p>
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-sm text-white">{aiDoctorSummary.title}</p>
+                  <p className="mt-2 text-xs text-slate-300">
+                    {aiDoctorSummary.summary}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {aiDoctorSummary.actions.map((action) => (
+                      <span key={action} className="feed-chip">
+                        {action}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-4 ai-alert">
+                  <div className="flex items-center gap-2 text-sm text-rose-200">
+                    <IconAlert />
+                    Emergency Alert Detection active
+                  </div>
+                  <p className="mt-1 text-xs text-rose-200/80">
+                    Critical signals trigger immediate emergency guidance.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </motion.section>
 
         <div className="grid gap-8 lg:grid-cols-[1.6fr_0.8fr]">
